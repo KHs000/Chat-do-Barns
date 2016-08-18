@@ -1,6 +1,7 @@
 
 package br.cefetmg.inf.barns.proxy;
 
+import 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -25,6 +26,9 @@ public class BarnsSkeleton {
         
         try {
             //DEFLAGRAR MENSAGENS PARA COM BASE NA FUNÇÃO (pm, gm, am)
+            
+            writer = AbstractInOut.getObjectWriter(this.getSocket());
+            reader = AbstractInOut.getObjectReader(this.getSocket());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
