@@ -1,7 +1,7 @@
 
 package br.cefetmg.inf.barns.proxy;
 
-import 
+import br.cefetmg.inf.barns.util.AbstractInOut;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -29,6 +29,8 @@ public class BarnsSkeleton {
             
             writer = AbstractInOut.getObjectWriter(this.getSocket());
             reader = AbstractInOut.getObjectReader(this.getSocket());
+            
+            
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
