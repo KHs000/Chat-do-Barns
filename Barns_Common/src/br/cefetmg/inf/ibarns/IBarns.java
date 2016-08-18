@@ -1,12 +1,14 @@
 
 package br.cefetmg.inf.ibarns;
 
+import br.cefetmg.inf.barns.domain.Message;
+
 /**
  *
  * @author Felipe Rabelo
  */
 public interface IBarns {
-    public String sendPrivateMessage (User sender, User receiver, String msg);
-    public String sendToGroup (String sender, Group receiver, String msg);
-    public String sendToAll (String sender, String msg);
+    public String sendPrivateMessage (Message m);
+    public String sendToGroup (Message m);
+    public String sendToAll (Message m);
 }

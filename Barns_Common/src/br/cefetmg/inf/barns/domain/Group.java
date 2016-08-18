@@ -5,6 +5,8 @@
  */
 package br.cefetmg.inf.barns.domain;
 
+import br.cefetmg.inf.barns.Idomain.Receiver;
+import br.cefetmg.inf.barns.Idomain.Sender;
 import java.util.List;
 
 /**
