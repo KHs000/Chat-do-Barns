@@ -30,6 +30,25 @@ public class BarnsSkeleton {
             writer = AbstractInOut.getObjectWriter(this.getSocket());
             reader = AbstractInOut.getObjectReader(this.getSocket());
             
+            int command; //Tipo de envio: Private(1) ; Grupo(2) ; ou All(3)
+            //Receiver target; 
+            // !-IMPORTANT Modelo de implementação que pede por uma classe receiver
+            //Receiver seria classe mãe de User e de Group
+            //Receiver target = new Group/User ();
+            // !-IMPORTANT END
+            String msg;
+            
+            command = reader.readInt();
+            switch (command) {
+                case 1:
+                    //target = new User();
+                    //target = reader.readObject();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+            }
             
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
