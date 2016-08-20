@@ -3,6 +3,7 @@ package br.cefetmg.inf.barns.domain;
 import br.cefetmg.inf.barns.Idomain.Receiver;
 import br.cefetmg.inf.barns.Idomain.Sender;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Message {
 
@@ -61,8 +62,12 @@ public class Message {
            return false;
     }
     
-    public void setReceiver(List<Receiver> receiver) {
-        this.receivers = receiver;
+    public void setReceivers(List<Receiver> receivers) {
+        receivers = receivers.stream().distinct().collect(Collectors.toList());
+        this.receivers = receivers;
     }
 
+    public void removeDuplicatedReceivers(){
+        receivers = receivers.stream().distinct().collect(Collectors.toList());
+    }
 }
