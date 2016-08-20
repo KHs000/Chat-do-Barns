@@ -39,14 +39,10 @@ public class BarnsSkeleton {
             String msg;
             
             command = reader.readInt();
-            switch (command) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
+            
+            if(command == 1){}
+            else if(command == 2){}
+            else if(command == 3){}
             
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
