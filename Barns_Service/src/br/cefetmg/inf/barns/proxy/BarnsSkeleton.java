@@ -41,8 +41,6 @@ public class BarnsSkeleton {
             command = reader.readInt();
             switch (command) {
                 case 1:
-                    //target = new User();
-                    //target = reader.readObject();
                     break;
                 case 2:
                     break;
