@@ -70,4 +70,6 @@ public class Message {
     public void removeDuplicatedReceivers(){
         receivers = receivers.stream().distinct().collect(Collectors.toList());
     }
+    
+    
 }

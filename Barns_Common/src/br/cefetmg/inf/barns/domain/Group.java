@@ -6,7 +6,7 @@
 package br.cefetmg.inf.barns.domain;
 
 import br.cefetmg.inf.barns.Idomain.Receiver;
-import br.cefetmg.inf.barns.Idomain.Sender;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -15,11 +15,13 @@ import java.util.stream.Collectors;
  *
  * @author Aluno
  */
-public class Group implements Sender, Receiver{
+public class Group implements Receiver{
     private List<User> participants;
+    private String name;
     
-    public Group() {
-      participants = null;
+    public Group(String name) {
+      participants = new ArrayList<User>();
+      this.name = name;
     }
     
     
@@ -32,6 +34,16 @@ public class Group implements Sender, Receiver{
         participants = participants.stream().distinct().collect(Collectors.toList());
         this.participants = participants;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
     
     public boolean addParticipants(User user){
         if(participants.contains(user) == false){
@@ -74,6 +86,11 @@ public class Group implements Sender, Receiver{
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Group{" + "participants=" + participants + ", name=" + name + '}';
     }
     
     

@@ -5,14 +5,17 @@
  */
 package br.cefetmg.inf.barns.domain;
 
+import br.cefetmg.inf.barns.Idomain.Receiver;
+import br.cefetmg.inf.barns.Idomain.Sender;
+
 /**
  *
  * @author Aluno
  */
-public class User {
+public class User implements Receiver, Sender{
     private String userName;
 
-    public User(){userName = null;}
+    public User(){userName = "";}
     
     public User(String userName) {
         this.userName = userName;
