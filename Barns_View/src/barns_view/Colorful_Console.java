@@ -38,6 +38,7 @@ public class Colorful_Console {
                     + Constants.COLOR_RESET;
         } else {
             printedMessage += Constants.COLOR_CYAN;
+            printedMessage += ((User) u.getSender()).getUserName();
             printedMessage += Constants.COLOR_RESET;
         }
         if (u.getGroupOfOrigin() != null) {

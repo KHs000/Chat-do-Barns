@@ -15,7 +15,8 @@ import br.cefetmg.inf.ibarns.IBarns;
 public class Barns_View {
 
     static Colorful_Console console = new Colorful_Console();
-
+    static String userName = null;
+    
     public static void initializeUpdater() {
         Thread updater = new Thread(new Runnable() {
             @Override
@@ -24,7 +25,7 @@ public class Barns_View {
                     try {
                         Thread.sleep(1000);
                         Barns_Stub Barns = new Barns_Stub("localhost", 7894);
-                        MessageUpdate up = Barns.getUpdate("robson");
+                        MessageUpdate up = Barns.getUpdate(userName);
                         console.write(up);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -44,7 +45,7 @@ public class Barns_View {
                         Thread.sleep(2);
                         Barns_Stub Barns = new Barns_Stub("localhost", 7894);
                         String command = console.read();                     
-                            String res = Barns.magicStringPreProcessor(command, "robson");
+                            String res = Barns.magicStringPreProcessor(command, userName);
                             System.out.println("RES : " + res);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -56,6 +57,14 @@ public class Barns_View {
     }
 
     public static void main(String[] args) {
+        while(userName == null){
+            System.out.println("Entre um nome de usuário (apenas letras)");
+            String userNameAttempt = console.read();
+            if(userNameAttempt.matches("[a-zA-Z]+")){
+                userName = userNameAttempt;
+            }
+        }
+        
         initializeUpdater();
         initiliazeReader();
 
