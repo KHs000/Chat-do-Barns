@@ -183,8 +183,11 @@ public class Barns_Service implements IBarns {
         } else {
             Server.allGroups.add(group);
             List<Receiver> receivers = new ArrayList<>();
-            receivers.add((Receiver) group);
-            Message notification = new Message("Voce foi adicionado ao grupo por "
+            //receivers.add((Receiver) group.getClonedParticipants().get(0));
+            for (int i = 0; i < group.getParticipants().size(); i++) {
+                receivers.add(group.getClonedParticipants().get(i));
+            }
+            Message notification = new Message("Voce foi adicionado ao grupo "+ group.getName() + " por "
                     + group.getParticipants().get(0).getUserName()
                     , Server.SYSTEM, receivers);
             Server.messageBuffer.add(notification);
