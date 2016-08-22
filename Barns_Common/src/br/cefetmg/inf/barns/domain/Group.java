@@ -6,6 +6,7 @@
 package br.cefetmg.inf.barns.domain;
 
 import br.cefetmg.inf.barns.Idomain.Receiver;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  *
  * @author Aluno
  */
-public class Group implements Receiver{
+public class Group implements Receiver, Serializable{
     private List<User> participants;
     private String name;
     
@@ -65,9 +66,8 @@ public class Group implements Receiver{
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.participants);
-        hash = 89 * hash + Objects.hashCode(this.name);
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.name);
         return hash;
     }
 
@@ -86,12 +86,10 @@ public class Group implements Receiver{
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        if (!Objects.equals(this.participants, other.participants)) {
-            return false;
-        }
         return true;
     }
 
+   
     
     @Override
     public String toString() {
