@@ -74,7 +74,20 @@ public class Barns_Stub implements IBarns {
 
     @Override
     public String sendToAll(Message m) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {  
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(3);
+            writer.writeObject(m);
+            writer.flush();
+            String res = (String) reader.readObject(); 
+            return res;
+            
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "sucess";
     }
     
    // public String processData(){}
@@ -96,21 +109,55 @@ public class Barns_Stub implements IBarns {
         return null;
     } 
     
+    
     public String createGroup(Group g){
-        return null;
+        try {  
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(6);
+            writer.writeObject(g);
+            writer.flush();
+            String res = (String) reader.readObject(); 
+            return res;
+            
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "sucess";
+    }
+    
+    public String removeGroup(String s){
+        try {  
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(5);
+            writer.writeObject(s);
+            writer.flush();
+            String res = (String) reader.readObject(); 
+            return res;
+            
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "sucess";
     }
     
     public String magicStringPreProcessor(String stringToBeProcessed, String userName) {
         String command;
         String[] targets;
-        String message;
+        String message = null;
         try {
             stringToBeProcessed = stringToBeProcessed.trim();
             int firstSpace = stringToBeProcessed.indexOf(" ");
             command = stringToBeProcessed.substring(0, firstSpace);
             if (!command.equalsIgnoreCase("pm")
                     && !command.equalsIgnoreCase("all")
-                    && !command.equalsIgnoreCase("gm")) {
+                    && !command.equalsIgnoreCase("gm")
+                    && !command.equalsIgnoreCase("create")
+                    && !command.equalsIgnoreCase("destroy")
+                    ) {
                 return "UNKNOWN COMMAND";
             }
             stringToBeProcessed = stringToBeProcessed.substring(firstSpace);
@@ -119,14 +166,17 @@ public class Barns_Stub implements IBarns {
                 targets[i] = targets[i].trim();
             }
             int messageSpaceDelimeter = targets[targets.length - 1].indexOf(" ");
-            if (messageSpaceDelimeter == -1) {
+            if (messageSpaceDelimeter == -1 && !command.equals("destroy") && !command.equals("all")) {
                 return "INSUFICIENT ARGUMENTS";
             }
-            message = targets[targets.length - 1].substring(messageSpaceDelimeter);
-            targets[targets.length - 1] = targets[targets.length - 1].substring(0, messageSpaceDelimeter);
-            message = message.trim();
+            if(!command.equals("destroy") && !command.equals("all")){
+                message = targets[targets.length - 1].substring(messageSpaceDelimeter);
+                targets[targets.length - 1] = targets[targets.length - 1].substring(0, messageSpaceDelimeter);
+                message = message.trim();
+            }
 
         } catch (Exception e) {
+            e.printStackTrace();
             return "SINTAX_ERROR";
         }
         if(command.equals("pm")){
@@ -137,8 +187,39 @@ public class Barns_Stub implements IBarns {
             Message m = new Message(message, new User(userName), r);
             return sendPrivateMessage(m);
         }
-        else if(command.equals("all")){}
-        else if(command.equals("gm")){}
+        else if(command.equals("all")){
+            if(targets.length > 1 )
+                return "INVALID ARGUMENTS";          
+            String msgTest = targets[0] + message;
+            List<Receiver> recebedores = new ArrayList<>();
+            recebedores.add(new User("\0"));
+            Message m = new Message(msgTest, new User(userName),recebedores );
+            return sendToAll(m);
+        }
+        else if(command.equals("gm")){
+            List<Receiver> r = new ArrayList<>();
+            for (int i = 0; i < targets.length; i++) {
+                r.add(new Group(targets[i]));
+            }
+            Message m = new Message(message, new User(userName), r);
+            return sendToGroup(m);
+        }
+        else if(command.equals("create")){
+            List<User> groupUsers = new ArrayList<>();
+            Group g = new Group(targets[0]);
+            g.addParticipants(new User(userName));
+            for (int i = 1; i < targets.length; i++) {
+                g.addParticipants(new User(targets[i]));
+            }
+            g.addParticipants(new User(message));
+            return createGroup(g);
+        }
+        else if(command.equals("destroy")){
+            if(targets.length > 1 )
+                return "INVALID ARGUMENTS";
+            String groupName = targets[0];
+            return removeGroup(groupName);
+        }
         return "SUCESS";
     }
 }

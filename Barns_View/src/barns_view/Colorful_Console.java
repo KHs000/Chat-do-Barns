@@ -24,13 +24,21 @@ public class Colorful_Console {
     }
 
     public void write(MessageUpdate u) {
-        if(u == null)
+        if (u == null) {
             return;
+        }
         String printedMessage = new String();
-        if (!((User) u.getSender()).getUserName().equals("SYSTEM")) {
+        if (((User) u.getSender()).getUserName().equals("SYSTEM")) {
+            printedMessage += Constants.COLOR_RED;
             printedMessage += ((User) u.getSender()).getUserName();
+            printedMessage += Constants.COLOR_RESET;
+        } else if (((User) u.getSender()).getUserName().startsWith("(ALL)")) {
+            printedMessage += Constants.COLOR_YELLOW
+                    + ((User) u.getSender()).getUserName()
+                    + Constants.COLOR_RESET;
         } else {
-            printedMessage += Constants.COLOR_BLUE;
+            printedMessage += Constants.COLOR_CYAN;
+            printedMessage += Constants.COLOR_RESET;
         }
         if (u.getGroupOfOrigin() != null) {
             printedMessage += " @ ";

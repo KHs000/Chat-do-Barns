@@ -24,7 +24,7 @@ public class Barns_View {
                     try {
                         Thread.sleep(1000);
                         Barns_Stub Barns = new Barns_Stub("localhost", 7894);
-                        MessageUpdate up = Barns.getUpdate("kok");
+                        MessageUpdate up = Barns.getUpdate("robson");
                         console.write(up);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -44,7 +44,7 @@ public class Barns_View {
                         Thread.sleep(2);
                         Barns_Stub Barns = new Barns_Stub("localhost", 7894);
                         String command = console.read();                     
-                            String res = Barns.magicStringPreProcessor(command, "kok");
+                            String res = Barns.magicStringPreProcessor(command, "robson");
                             System.out.println("RES : " + res);
                     } catch (Exception e) {
                         e.printStackTrace();
