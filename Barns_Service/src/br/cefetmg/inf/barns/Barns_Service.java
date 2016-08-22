@@ -7,6 +7,7 @@ import br.cefetmg.inf.barns.domain.Group;
 import br.cefetmg.inf.barns.domain.Message;
 import br.cefetmg.inf.barns.domain.MessageUpdate;
 import br.cefetmg.inf.barns.domain.User;
+import br.cefetmg.inf.barns.util.Constants;
 import br.cefetmg.inf.ibarns.IBarns;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,6 +43,10 @@ public class Barns_Service implements IBarns {
             if (!Server.allGroups.contains(m.getReceiver().get(i))) {
                 Group group = (Group) m.getReceiver().get(i);
                 retorno += "o grupo: " + group.getName() + " nao foi encontrado \n";
+            } else {
+                int index = Server.allGroups.indexOf(m.getReceiver().get(i));
+                List<User> users = Server.allGroups.get(index).getParticipants();
+                ((Group) m.getReceiver().get(i)).setParticipants(users);
             }
         }
         if (retorno.isEmpty()) {
@@ -53,9 +58,14 @@ public class Barns_Service implements IBarns {
     @Override
     public String sendToAll(Message m) {
         List<User> allUsers = Server.allUsers;
+        m.getReceiver().clear();
         for (int i = 0; i < allUsers.size(); i++) {
             m.addReceiver((Receiver) allUsers.get(i));
         }
+        String userName;
+        userName = ((User) m.getSender()).getUserName();
+        userName = "(ALL)" + userName;
+        m.setSender(new User(userName));
         m.removeDuplicatedReceivers();
         Server.messageBuffer.add(m);
         return "";
@@ -73,7 +83,7 @@ public class Barns_Service implements IBarns {
             Message currentMessage = MessageList.get(i);
             for (int j = 0; j < currentMessage.getReceiver().size(); j++) {
                 if (currentMessage.getReceiver().get(j).getClass() == u.getClass()) {
-                    User user = (User) currentMessage.getReceiver().get(j);                 
+                    User user = (User) currentMessage.getReceiver().get(j);
                     if (u.getUserName().equals(user.getUserName())) {
                         Server.messageBuffer.get(i).getReceiver().remove(user);
                         return new MessageUpdate(currentMessage.getText(),
@@ -160,7 +170,8 @@ public class Barns_Service implements IBarns {
                 Message notification = new Message("O grupo: "
                         + Server.allGroups.get(i).getName() + " foi destruído", Server.SYSTEM, receivers);
                 Server.allGroups.remove(i);
-                return "";
+                Server.messageBuffer.add(notification);
+                return "Destruido";
             }
         }
         return "O grupo n foi encontrado";
@@ -173,9 +184,11 @@ public class Barns_Service implements IBarns {
             Server.allGroups.add(group);
             List<Receiver> receivers = new ArrayList<>();
             receivers.add((Receiver) group);
-            Message notification = new Message("Voce foi adicionado ao grupo: "
-                    + group.getName(), Server.SYSTEM, receivers);
-            return "";
+            Message notification = new Message("Voce foi adicionado ao grupo por "
+                    + group.getParticipants().get(0).getUserName()
+                    , Server.SYSTEM, receivers);
+            Server.messageBuffer.add(notification);
+            return "Sucesso na criação";
         }
     }
 

@@ -2,6 +2,7 @@
 package br.cefetmg.inf.barns.proxy;
 
 import br.cefetmg.inf.barns.Barns_Service;
+import br.cefetmg.inf.barns.domain.Group;
 import br.cefetmg.inf.barns.domain.Message;
 import br.cefetmg.inf.barns.domain.MessageUpdate;
 import br.cefetmg.inf.barns.util.AbstractInOut;
@@ -56,9 +57,23 @@ public class BarnsSkeleton implements Runnable{
                 writer.writeObject(res);
                 writer.flush();
             }
-            else if(command == 3){}
+            else if(command == 3){
+                Message allM  = (Message) reader.readObject();
+                String res = processor.sendToAll(allM);
+                writer.writeObject(res);
+                writer.flush();
+            }
+            else if(command == 5){
+                String s  = (String) reader.readObject();
+                String res = processor.removeGroup(s);
+                writer.writeObject(res);
+                writer.flush();
+            }
             else if(command == 6){
-                
+                Group g  = (Group) reader.readObject();
+                String res = processor.createGroup(g);
+                writer.writeObject(res);
+                writer.flush();
             }
             else if(command == 9){
                 String userName  = (String) reader.readObject();

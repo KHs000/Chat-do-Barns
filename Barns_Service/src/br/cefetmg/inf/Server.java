@@ -32,6 +32,7 @@ public class Server {
     
     public static void main (String args[]) throws IOException {
         allUsers.add(new User("kok"));
+        allUsers.add(new User("robson"));
         ServerSocket server = null;
         
         try {
