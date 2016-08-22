@@ -66,7 +66,8 @@ public class Group implements Receiver{
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + Objects.hashCode(this.participants);
+        hash = 89 * hash + Objects.hashCode(this.participants);
+        hash = 89 * hash + Objects.hashCode(this.name);
         return hash;
     }
 
@@ -82,12 +83,16 @@ public class Group implements Receiver{
             return false;
         }
         final Group other = (Group) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
         if (!Objects.equals(this.participants, other.participants)) {
             return false;
         }
         return true;
     }
 
+    
     @Override
     public String toString() {
         return "Group{" + "participants=" + participants + ", name=" + name + '}';

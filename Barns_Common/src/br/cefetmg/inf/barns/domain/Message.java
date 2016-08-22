@@ -2,10 +2,15 @@ package br.cefetmg.inf.barns.domain;
 
 import br.cefetmg.inf.barns.Idomain.Receiver;
 import br.cefetmg.inf.barns.Idomain.Sender;
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Message {
+/**
+ *
+ * @author Conta Única
+ */
+public class Message implements Serializable{
 
     private String text;
     private Sender sender;

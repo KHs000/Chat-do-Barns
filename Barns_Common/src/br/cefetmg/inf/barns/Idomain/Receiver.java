@@ -5,10 +5,12 @@
  */
 package br.cefetmg.inf.barns.Idomain;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Aluno
  */
-public interface Receiver {
+public interface Receiver extends Serializable{
     
 }

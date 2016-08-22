@@ -5,17 +5,20 @@
  */
 package br.cefetmg.inf.barns.domain;
 
+import br.cefetmg.inf.barns.util.Constants;
+
 /**
  *
  * @author Digao <Digao at CEFET-MG>
  */
+@Deprecated
 public class Action {
     private int actionType;
     private String userName;
     private Group group;
     
     public Action(){
-        actionType = 2011;
+        actionType = 2011; 
         userName = "";
         group = new Group("");
     }

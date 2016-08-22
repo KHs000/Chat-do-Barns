@@ -7,12 +7,13 @@ package br.cefetmg.inf.barns.domain;
 
 import br.cefetmg.inf.barns.Idomain.Receiver;
 import br.cefetmg.inf.barns.Idomain.Sender;
+import java.io.Serializable;
 
 /**
  *
  * @author Digao <Digao at CEFET-MG>
  */
-public class MessageUpdate {
+public class MessageUpdate implements Serializable{
     
     String text;
     Sender sender;

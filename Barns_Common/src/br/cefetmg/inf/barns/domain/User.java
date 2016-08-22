@@ -7,6 +7,7 @@ package br.cefetmg.inf.barns.domain;
 
 import br.cefetmg.inf.barns.Idomain.Receiver;
 import br.cefetmg.inf.barns.Idomain.Sender;
+import java.util.Objects;
 
 /**
  *
@@ -27,6 +28,31 @@ public class User implements Receiver, Sender{
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + Objects.hashCode(this.userName);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final User other = (User) obj;
+        if (!Objects.equals(this.userName, other.userName)) {
+            return false;
+        }
+        return true;
     }
     
     
