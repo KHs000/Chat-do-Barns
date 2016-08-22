@@ -46,7 +46,7 @@ public class mainTest {
         User dijo = new User("DIJORGINIS");
         Group turmaDosMacaco = new Group("turmaDosMacaco");
         turmaDosMacaco.addParticipants(dijo);
-        List<Receiver> recebidores = new ArrayList<Receiver>();
+        List<Receiver> recebidores = new ArrayList<>();
         recebidores.add((Receiver) dijo);
         Server.allUsers.add(jozao);
         Server.allUsers.add(dijo);
@@ -55,7 +55,9 @@ public class mainTest {
         m.setText("COLE VIADO");
         m.setReceivers(recebidores);
         bs.createGroup(turmaDosMacaco);
-        String sendReturn  = bs.sendPrivateMessage(m);
+        bs.removeGroup("turmaDosMacaco");
+        System.out.println(bs.createGroup(turmaDosMacaco));
+        String sendReturn  = bs.sendToAll(m);
         System.out.println("SEND RETURN: " + sendReturn); 
         
         System.out.println(Server.messageBuffer);
