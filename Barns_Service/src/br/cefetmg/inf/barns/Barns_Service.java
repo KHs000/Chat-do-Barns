@@ -195,4 +195,21 @@ public class Barns_Service implements IBarns {
         }
     }
 
+    public String login(String nick){
+        return "n suportado";
+    }
+    
+    public List<Group> listGroups(String userName){
+        User user = new User(userName);
+        List<Group> grupos = new ArrayList<>();
+        for (int i = 0; i < Server.allGroups.size(); i++) {
+            if(Server.allGroups.get(i).getParticipants().contains(user)){
+                grupos.add(Server.allGroups.get(i));
+            }
+        }
+        if(grupos.isEmpty())
+            return null;
+        else 
+            return grupos;
+    }
 }
