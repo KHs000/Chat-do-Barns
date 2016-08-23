@@ -169,6 +169,8 @@ public class Barns_Stub implements IBarns {
             writer.writeObject(userName);
             writer.flush();
             List<Group> res = (List<Group>) reader.readObject();
+            if(res == null)
+                return null;
             String processedString = "";
             for (int i = 0; i < res.size(); i++) {
                 processedString+= res.get(i).getName();
@@ -189,7 +191,11 @@ public class Barns_Stub implements IBarns {
         try {
             stringToBeProcessed = stringToBeProcessed.trim();
             if (stringToBeProcessed.startsWith("list")) {
-                return listaGrupos(userName);
+                String grupos =  listaGrupos(userName);
+                if(grupos == null)
+                    return "vc n esta em nenhum grupo";
+                else
+                    return grupos;
             } 
             int firstSpace = stringToBeProcessed.indexOf(" ");
             command = stringToBeProcessed.substring(0, firstSpace);
@@ -239,7 +245,7 @@ public class Barns_Stub implements IBarns {
             if (targets.length > 1) {
                 return "INVALID ARGUMENTS";
             }
-            String msgTest = targets[0] + message;
+            String msgTest = targets[0];
             List<Receiver> recebedores = new ArrayList<>();
             recebedores.add(new User("\0"));
             Message m = new Message(msgTest, new User(userName), recebedores);
