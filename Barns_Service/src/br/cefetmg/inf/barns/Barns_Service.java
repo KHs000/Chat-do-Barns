@@ -64,8 +64,10 @@ public class Barns_Service implements IBarns {
         }
         String userName;
         userName = ((User) m.getSender()).getUserName();
+        m.getReceiver().remove(new User(userName));
         userName = "(ALL)" + userName;
         m.setSender(new User(userName));
+        //m.getReceiver().remove(new User(((User) m.getSender()).getUserName().)
         m.removeDuplicatedReceivers();
         Server.messageBuffer.add(m);
         return "";
