@@ -88,6 +88,18 @@ public class BarnsSkeleton implements Runnable{
                 writer.writeObject(groups);
                 writer.flush();
             }
+            else if(command == 26){
+                Group g  = (Group) reader.readObject();
+                String res = processor.removeFromGroup(g.getClonedParticipants().get(0), g.getName());
+                writer.writeObject(res);
+                writer.flush();
+            }
+            else if(command == 27){
+                Group g  = (Group) reader.readObject();
+                String res = processor.addToGroup(g.getClonedParticipants().get(0), g.getName());
+                writer.writeObject(res);
+                writer.flush();
+            }
             else if(command == 0){
                 String userName  = (String) reader.readObject();
             }

@@ -128,7 +128,7 @@ public class Barns_Service implements IBarns {
         return null;
     }
 
-    public boolean addToGroup(User user, String groupName) {
+    public String addToGroup(User user, String groupName) {
         for (int i = 0; i < Server.allGroups.size(); i++) {
             if (Server.allGroups.get(i).getName().equals(groupName)) {
                 boolean result = Server.allGroups.get(i).addParticipants(user);
@@ -137,13 +137,13 @@ public class Barns_Service implements IBarns {
                     receivers.add((Receiver) user);
                     Message notification = new Message("Voce foi adicionado ao grupo: "
                             + groupName, Server.SYSTEM, receivers);
-                    return true;
+                    return "sucesso";
                 } else {
-                    return false;
+                    return "o participante ja esta no grupo";
                 }
             }
         }
-        return false;
+        return "falha";
     }
 
     public String removeFromGroup(User user, String groupName) {
@@ -197,9 +197,6 @@ public class Barns_Service implements IBarns {
         }
     }
 
-    public String login(String nick){
-        return "n suportado";
-    }
     
     public List<Group> listGroups(String userName){
         User user = new User(userName);
@@ -213,5 +210,35 @@ public class Barns_Service implements IBarns {
             return null;
         else 
             return grupos;
+    }
+    
+     
+    public String login(String userName){
+        User user = new User(userName);
+        if(Server.allUsers.contains(user)){
+            return "usuario já existe";
+        }
+        else{
+            Server.allUsers.add(user);
+            Server.lastUpdateRequest.put(userName, 0);
+            initializeGC(userName);
+        }
+        return "sucesso";
+    }
+    
+    private void initializeGC(String userName) {
+        Runnable GarbageCollectorThread = new Runnable() {
+            @Override
+            public void run() {
+                Integer lastUpdateTime = Server.lastUpdateRequest.get(userName);
+                if(lastUpdateTime > 3000)
+                    destroyUser(userName);
+            }
+        };
+        new Thread(GarbageCollectorThread).start();
+    }
+    
+    private void destroyUser(String userName){
+        /* a ser implementado */
     }
 }
