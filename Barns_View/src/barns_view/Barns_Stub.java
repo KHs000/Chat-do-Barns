@@ -143,6 +143,41 @@ public class Barns_Stub implements IBarns {
         return "sucess";
     }
     
+    public String removeFromGroup(Group g){
+        try {
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(26);
+            writer.writeObject(g);
+            writer.flush();
+            String res = (String) reader.readObject();
+            return res;
+            
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "sucess";
+    }
+    
+    public String addToGroup(Group g){
+        try {
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(27);
+            writer.writeObject(g);
+            writer.flush();
+            String res = (String) reader.readObject();
+            return res;
+            
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "sucess";
+    }
+    
+    
     public String login(String nickName) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
@@ -205,7 +240,10 @@ public class Barns_Stub implements IBarns {
                     && !command.equalsIgnoreCase("create")
                     && !command.equalsIgnoreCase("destroy")
                     && !command.equalsIgnoreCase("login")
-                    && !command.equalsIgnoreCase("list")) {
+                    && !command.equalsIgnoreCase("list")
+                    && !command.equalsIgnoreCase("removeFrom")
+                    && !command.equalsIgnoreCase("addTo"))
+            {
                 return "UNKNOWN COMMAND";
             }
             stringToBeProcessed = stringToBeProcessed.substring(firstSpace);
@@ -278,7 +316,15 @@ public class Barns_Stub implements IBarns {
             }
             String nickName = targets[0];
             return login(nickName);
+        }else if(command.equalsIgnoreCase("removeFrom")){
+            if (targets.length > 1) {
+                return "INVALID ARGUMENTS";
+            }
+            Group g = new Group(targets[0]);
+            g.addParticipants(new User(message));
+            return removeFromGroup(g);
         }
+        else if(command.equalsIgnoreCase("addTo")){}
         return "SUCESS";
     }
     

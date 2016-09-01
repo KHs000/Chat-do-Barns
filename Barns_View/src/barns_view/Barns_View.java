@@ -60,7 +60,7 @@ public class Barns_View {
         while(userName == null){
             System.out.println("Entre um nome de usuário (apenas letras)");
             String userNameAttempt = console.read();
-            if(userNameAttempt.matches("[a-zA-Z]+")){
+            if(userNameAttempt.matches("[a-zA-Z]+") && userNameAttempt.compareToIgnoreCase("system") == 0){
                 userName = userNameAttempt;
             }
         }
