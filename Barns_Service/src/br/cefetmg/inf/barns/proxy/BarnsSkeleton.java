@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 
 /**
  *
@@ -80,6 +81,27 @@ public class BarnsSkeleton implements Runnable{
                 MessageUpdate res = processor.getMessageUpdates(userName);
                 writer.writeObject(res);
                 writer.flush();
+            }
+            else if(command == 11){
+                String userName  = (String) reader.readObject();
+                List<Group> groups = processor.listGroups(userName);
+                writer.writeObject(groups);
+                writer.flush();
+            }
+            else if(command == 26){
+                Group g  = (Group) reader.readObject();
+                String res = processor.removeFromGroup(g.getClonedParticipants().get(0), g.getName());
+                writer.writeObject(res);
+                writer.flush();
+            }
+            else if(command == 27){
+                Group g  = (Group) reader.readObject();
+                String res = processor.addToGroup(g.getClonedParticipants().get(0), g.getName());
+                writer.writeObject(res);
+                writer.flush();
+            }
+            else if(command == 0){
+                String userName  = (String) reader.readObject();
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
