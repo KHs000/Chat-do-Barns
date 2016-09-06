@@ -12,6 +12,7 @@ import br.cefetmg.inf.barns.domain.Message;
 import br.cefetmg.inf.barns.domain.MessageUpdate;
 import br.cefetmg.inf.barns.domain.User;
 import br.cefetmg.inf.barns.util.AbstractInOut;
+import br.cefetmg.inf.barns.util.Constants;
 import br.cefetmg.inf.ibarns.IBarns;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,15 +29,15 @@ import java.util.logging.Logger;
  * @author Digao <Digao at CEFET-MG>
  */
 public class Barns_Stub implements IBarns {
-    
+
     private String serverAddress;
     private int serverPort;
-    
+
     public Barns_Stub(String serverAddress, int serverPort) {
         this.serverAddress = serverAddress;
         this.serverPort = serverPort;
     }
-    
+
     @Override
     public String sendPrivateMessage(Message m) {
         try {
@@ -48,13 +49,13 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
+
     @Override
     public String sendToGroup(Message m) {
         try {
@@ -66,13 +67,13 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
+
     @Override
     public String sendToAll(Message m) {
         try {
@@ -84,7 +85,7 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -102,13 +103,13 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             MessageUpdate res = (MessageUpdate) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-    
+
     public String createGroup(Group g) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
@@ -119,31 +120,32 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
-    public String removeGroup(String s) {
+
+    public String removeGroup(String groupName, String user) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
             ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
             ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
             writer.writeInt(5);
-            writer.writeObject(s);
+            writer.writeObject(groupName);
+            writer.writeObject(user);
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
-    public String removeFromGroup(Group g){
+
+    public String removeFromGroup(Group g) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
             ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
@@ -153,14 +155,14 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
-    public String addToGroup(Group g){
+
+    public String addToGroup(Group g) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
             ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
@@ -170,14 +172,13 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
-    
+
     public String login(String nickName) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
@@ -188,13 +189,13 @@ public class Barns_Stub implements IBarns {
             writer.flush();
             String res = (String) reader.readObject();
             return res;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "sucess";
     }
-    
+
     public String listaGrupos(String userName) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
@@ -204,34 +205,93 @@ public class Barns_Stub implements IBarns {
             writer.writeObject(userName);
             writer.flush();
             List<Group> res = (List<Group>) reader.readObject();
-            if(res == null)
+            if (res == null) {
                 return null;
+            }
             String processedString = "";
             for (int i = 0; i < res.size(); i++) {
-                processedString+= res.get(i).getName();
-                processedString+= "\n";
+                processedString += res.get(i).getName();
+                processedString += "\n";
             }
             return processedString;
-            
+
         } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-    
+
+    public String listaAll() {
+        try {
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(60);
+            writer.flush();
+            List<User> res = (List<User>) reader.readObject();
+            if (res == null) {
+                return null;
+            }
+            String processedString = "";
+            for (int i = 0; i < res.size(); i++) {
+                processedString += res.get(i).getUserName();
+                processedString += "\n";
+            }
+            return processedString;
+
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public String listGroupUsers(String groupName, String userName) {
+        try {
+            Socket socket = new Socket(this.serverAddress, this.serverPort);
+            ObjectOutputStream writer = AbstractInOut.getObjectWriter(socket);
+            ObjectInputStream reader = AbstractInOut.getObjectReader(socket);
+            writer.writeInt(63);
+            writer.writeObject(groupName);
+            writer.writeObject(userName);
+            writer.flush();
+            List<User> res = (List<User>) reader.readObject();
+            if (res == null) {
+                return "esse grupo nao existe, ou voce nao tem direitos suficientes";
+            }
+            String processedString = "";
+            for (int i = 0; i < res.size(); i++) {
+                processedString += res.get(i).getUserName();
+                processedString += "\n";
+            }
+            return processedString;
+
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(Barns_Stub.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
     public String magicStringPreProcessor(String stringToBeProcessed, String userName) {
         String command;
         String[] targets;
         String message = null;
         try {
             stringToBeProcessed = stringToBeProcessed.trim();
-            if (stringToBeProcessed.startsWith("list")) {
-                String grupos =  listaGrupos(userName);
-                if(grupos == null)
-                    return "vc n esta em nenhum grupo";
-                else
-                    return grupos;
-            } 
+            if (stringToBeProcessed.startsWith("help")) {
+                return Constants.helpString;
+            } else {
+                if (stringToBeProcessed.startsWith("listg")) {
+                    String grupos = listaGrupos(userName);
+                    if (grupos == null) {
+                        return "vc n esta em nenhum grupo";
+                    } else {
+                        return grupos;
+                    }
+                } else if (stringToBeProcessed.startsWith("listu")) {
+                    String usuarios = listaAll();
+                    return usuarios;
+                }
+            }
             int firstSpace = stringToBeProcessed.indexOf(" ");
             command = stringToBeProcessed.substring(0, firstSpace);
             if (!command.equalsIgnoreCase("pm")
@@ -240,11 +300,12 @@ public class Barns_Stub implements IBarns {
                     && !command.equalsIgnoreCase("create")
                     && !command.equalsIgnoreCase("destroy")
                     && !command.equalsIgnoreCase("login")
-                    && !command.equalsIgnoreCase("list")
+                    && !command.equalsIgnoreCase("listu")
+                    && !command.equalsIgnoreCase("listg")
                     && !command.equalsIgnoreCase("removeFrom")
-                    && !command.equalsIgnoreCase("addTo"))
-            {
-                return "UNKNOWN COMMAND";
+                    && !command.equalsIgnoreCase("addTo")
+                    && !command.equalsIgnoreCase("listFrom")) {
+                return "UNKNOWN COMMAND digite help para mais detalhes";
             }
             stringToBeProcessed = stringToBeProcessed.substring(firstSpace);
             targets = stringToBeProcessed.split(",");
@@ -254,23 +315,28 @@ public class Barns_Stub implements IBarns {
             int messageSpaceDelimeter = targets[targets.length - 1].indexOf(" ");
             if (messageSpaceDelimeter == -1
                     && !command.equals("destroy")
+                    && !command.equals("create")
                     && !command.equals("all")
                     && !command.equals("login")
-                    && !command.equalsIgnoreCase("list")) {
+                    && !command.equalsIgnoreCase("listu")
+                    && !command.equalsIgnoreCase("listg")
+                    && !command.equalsIgnoreCase("listFrom")) {
                 return "INSUFICIENT ARGUMENTS";
             }
             if (!command.equals("destroy")
                     && !command.equals("all")
                     && !command.equals("login")
-                    && !command.equalsIgnoreCase("list")) {
+                    && !command.equals("create")
+                    && !command.equalsIgnoreCase("listu")
+                    && !command.equalsIgnoreCase("listg")
+                    && !command.equalsIgnoreCase("listFrom")) {
                 message = targets[targets.length - 1].substring(messageSpaceDelimeter);
                 targets[targets.length - 1] = targets[targets.length - 1].substring(0, messageSpaceDelimeter);
                 message = message.trim();
             }
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
-            return "SINTAX_ERROR";
+            return "SINTAX_ERROR digite help para mais detalhes";
         }
         if (command.equals("pm")) {
             List<Receiver> r = new ArrayList<>();
@@ -281,7 +347,7 @@ public class Barns_Stub implements IBarns {
             return sendPrivateMessage(m);
         } else if (command.equals("all")) {
             if (targets.length > 1) {
-                return "INVALID ARGUMENTS";
+                return "INVALID ARGUMENTS digite help para mais detalhes";
             }
             String msgTest = targets[0];
             List<Receiver> recebedores = new ArrayList<>();
@@ -297,35 +363,52 @@ public class Barns_Stub implements IBarns {
             return sendToGroup(m);
         } else if (command.equals("create")) {
             List<User> groupUsers = new ArrayList<>();
-            Group g = new Group(targets[0]);
+            Group g = new Group(targets[0].split(" ")[0]);
             g.addParticipants(new User(userName));
+            if (targets[0].split(" ").length > 1) {
+                g.addParticipants(new User(targets[0].split(" ")[1]));
+            }
             for (int i = 1; i < targets.length; i++) {
                 g.addParticipants(new User(targets[i]));
             }
-            g.addParticipants(new User(message));
+
             return createGroup(g);
         } else if (command.equals("destroy")) {
             if (targets.length > 1) {
-                return "INVALID ARGUMENTS";
+                return "INVALID ARGUMENTS digite help para mais detalhes";
             }
             String groupName = targets[0];
-            return removeGroup(groupName);
-        }else if (command.equals("login")) {
+            return removeGroup(groupName, userName);
+        } else if (command.equals("login")) {
             if (targets.length > 1) {
-                return "INVALID ARGUMENTS";
+                return "INVALID ARGUMENTS digite help para mais detalhes";
             }
             String nickName = targets[0];
             return login(nickName);
-        }else if(command.equalsIgnoreCase("removeFrom")){
+        } else if (command.equalsIgnoreCase("removeFrom")) {
             if (targets.length > 1) {
-                return "INVALID ARGUMENTS";
+                return "INVALID ARGUMENTS digite help para mais detalhes";
             }
             Group g = new Group(targets[0]);
+            g.addParticipants(new User(userName));
             g.addParticipants(new User(message));
             return removeFromGroup(g);
+        } else if (command.equalsIgnoreCase("addTo")) {
+            if (targets.length > 1) {
+                return "INVALID ARGUMENTS digite help para mais detalhes";
+            }
+            Group g = new Group(targets[0]);
+            g.addParticipants(new User(userName));
+            g.addParticipants(new User(message));
+            return addToGroup(g);
+        } else if (command.equalsIgnoreCase("listFrom")) {
+            if (targets.length > 1) {
+                return "INVALID ARGUMENTS digite help para mais detalhes";
+            }
+            String groupName = targets[0];
+            return listGroupUsers(groupName, userName);
         }
-        else if(command.equalsIgnoreCase("addTo")){}
         return "SUCESS";
     }
-    
+
 }

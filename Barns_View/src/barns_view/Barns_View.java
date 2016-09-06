@@ -15,18 +15,21 @@ import br.cefetmg.inf.ibarns.IBarns;
 public class Barns_View {
 
     static Colorful_Console console = new Colorful_Console();
+    static Barns_Stub Barns = new Barns_Stub("localhost", 7894);
     static String userName = null;
     
     public static void initializeUpdater() {
         Thread updater = new Thread(new Runnable() {
+            MessageUpdate up;
             @Override
             public void run() {
                 while (true) {
                     try {
                         Thread.sleep(1000);
-                        Barns_Stub Barns = new Barns_Stub("localhost", 7894);
-                        MessageUpdate up = Barns.getUpdate(userName);
+                        up = Barns.getUpdate(userName);
                         console.write(up);
+                        up = null;
+                        System.gc();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -37,16 +40,19 @@ public class Barns_View {
     }
 
     public static void initiliazeReader() {
-        Thread readerThread = new Thread(new Runnable() {
+            Thread readerThread = new Thread(new Runnable() {
+            String command ;
+            String res;
             @Override
             public void run() {
                 while (true) {
                     try {
                         Thread.sleep(2);
-                        Barns_Stub Barns = new Barns_Stub("localhost", 7894);
-                        String command = console.read();                     
-                            String res = Barns.magicStringPreProcessor(command, userName);
-                            System.out.println("RES : " + res);
+                            command = console.read();                     
+                            res = Barns.magicStringPreProcessor(command, userName);
+                            if(!res.isEmpty())
+                                System.out.println(res);
+                        System.gc();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -60,10 +66,14 @@ public class Barns_View {
         while(userName == null){
             System.out.println("Entre um nome de usuário (apenas letras)");
             String userNameAttempt = console.read();
-            if(userNameAttempt.matches("[a-zA-Z]+") && userNameAttempt.compareToIgnoreCase("system") == 0){
-                userName = userNameAttempt;
+            if(userNameAttempt.matches("[a-zA-Z]+") 
+                    && userNameAttempt.compareToIgnoreCase("system") != 0
+                    && !userNameAttempt.equals(userName)){
+                Barns_Stub Barns = new Barns_Stub("localhost", 7894);
+                userName = Barns.login(userNameAttempt);
             }
         }
+        System.gc();
         
         initializeUpdater();
         initiliazeReader();
