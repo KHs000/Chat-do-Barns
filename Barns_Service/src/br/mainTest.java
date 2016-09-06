@@ -55,7 +55,7 @@ public class mainTest {
         m.setText("COLE VIADO");
         m.setReceivers(recebidores);
         bs.createGroup(turmaDosMacaco);
-        bs.removeGroup("turmaDosMacaco");
+       // bs.removeGroup("turmaDosMacaco");
         System.out.println(bs.createGroup(turmaDosMacaco));
         String sendReturn  = bs.sendToAll(m);
         System.out.println("SEND RETURN: " + sendReturn); 

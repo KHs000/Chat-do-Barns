@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,22 +37,22 @@ public class Server {
 
     public static void main(String args[]) throws IOException {
         //map.get("");
+        /*
         allUsers.add(new User("kok"));
         allUsers.add(new User("robson"));
+        */
         ServerSocket server = null;
 
         try {
             server = new ServerSocket(7894);
-
+            initializeTimeoutEngine();
+            
             while (true) {
-                System.out.println("preparado");
                 Socket socket = server.accept();
-                System.out.println("CONEXÃO ACEITA");
                 BarnsSkeleton chat = new BarnsSkeleton(socket);
                 Thread t = new Thread(chat);
                 t.start();
-                initializeTimeoutEngine();
-
+                
             }
         } catch (Exception e) {
             if (server != null) {
@@ -64,9 +66,18 @@ public class Server {
             @Override
             public void run() {
                 while(true){
+                    try{
+                        Thread.sleep(1);} catch (InterruptedException ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     for (Map.Entry<String, Integer> entry : lastUpdateRequest.entrySet()) {
+                        String userName = entry.getKey();
                         Integer value = entry.getValue();
-                        entry.setValue(value++);
+                        entry.setValue(value+=1);
+                        System.out.println(entry.getKey() + "  " + entry.getValue());
+                        if(value > 5000){
+                            Barns_Service.destroyUser(userName);
+                        }
                     }
                 }
             }
@@ -74,5 +85,5 @@ public class Server {
         new Thread(GarbageCollectorThread).start();
     }
    
-
+    
 }

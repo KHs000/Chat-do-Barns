@@ -42,11 +42,16 @@ public class Barns_Service implements IBarns {
         for (int i = 0; i < m.getReceiver().size(); i++) {
             if (!Server.allGroups.contains(m.getReceiver().get(i))) {
                 Group group = (Group) m.getReceiver().get(i);
-                retorno += "o grupo: " + group.getName() + " nao foi encontrado \n";
+                retorno += "o grupo nao foi encontrado";
             } else {
                 int index = Server.allGroups.indexOf(m.getReceiver().get(i));
-                List<User> users = Server.allGroups.get(index).getParticipants();
+                List<User> users = Server.allGroups.get(index).getClonedParticipants();
+                if(!Server.allGroups.get(index).getParticipants().contains(m.getSender())){
+                    return "o grupo: nao foi encontrado";
+                }
                 ((Group) m.getReceiver().get(i)).setParticipants(users);
+                ((Group) m.getReceiver().get(i)).removeUser((User) m.getSender());
+                
             }
         }
         if (retorno.isEmpty()) {
@@ -76,10 +81,12 @@ public class Barns_Service implements IBarns {
     /**
      * Pega a primeira menssagem do usuário, e remove o do buffer de menssagems;
      * *** INCLUINDO GRUPOS ***
+     * e atuliza a timeout engine (que apaga um usuario inativo)
      */
-    public MessageUpdate getMessageUpdates(String userName) {
+    public static MessageUpdate getMessageUpdates(String userName) {
+        
         User u = new User(userName);
-
+        Server.lastUpdateRequest.replace(userName, 0);
         List<Message> MessageList = Server.messageBuffer;
         for (int i = 0; i < MessageList.size(); i++) {
             Message currentMessage = MessageList.get(i);
@@ -88,6 +95,7 @@ public class Barns_Service implements IBarns {
                     User user = (User) currentMessage.getReceiver().get(j);
                     if (u.getUserName().equals(user.getUserName())) {
                         Server.messageBuffer.get(i).getReceiver().remove(user);
+                        
                         return new MessageUpdate(currentMessage.getText(),
                                 currentMessage.getSender(),
                                 user,
@@ -102,6 +110,7 @@ public class Barns_Service implements IBarns {
                             Server.messageBuffer.get(i).getReceiver().remove(group);
                             group.removeUser(usuario);
                             Server.messageBuffer.get(i).getReceiver().add(group);
+
                             return new MessageUpdate(currentMessage.getText(),
                                     currentMessage.getSender(),
                                     (Receiver) usuario,
@@ -111,7 +120,8 @@ public class Barns_Service implements IBarns {
                     }
                 }
             }
-            //firstUpdate = MessageList.get(i);
+            if(currentMessage.getReceiver().isEmpty())
+                Server.messageBuffer.remove(i);
         }
         return null;
     }
@@ -128,10 +138,14 @@ public class Barns_Service implements IBarns {
         return null;
     }
 
-    public String addToGroup(User user, String groupName) {
+    public String addToGroup(User user, String groupName,String userToAdd) {
+        
         for (int i = 0; i < Server.allGroups.size(); i++) {
             if (Server.allGroups.get(i).getName().equals(groupName)) {
-                boolean result = Server.allGroups.get(i).addParticipants(user);
+                if(Server.allGroups.get(i).getClonedParticipants().contains(user) == false){
+                    return "o grupo não existe, ou você n esta grupo";
+                }
+                boolean result = Server.allGroups.get(i).addParticipants(new User(userToAdd));
                 if (result == true) {
                     List<Receiver> receivers = new ArrayList<>();
                     receivers.add((Receiver) user);
@@ -146,10 +160,12 @@ public class Barns_Service implements IBarns {
         return "falha";
     }
 
-    public String removeFromGroup(User user, String groupName) {
+    public String removeFromGroup(User user, String groupName, String userToRemove) {        
         for (int i = 0; i < Server.allGroups.size(); i++) {
             if (Server.allGroups.get(i).getName().equals(groupName)) {
-                boolean result = Server.allGroups.get(i).removeUser(user);
+                if(!Server.allGroups.get(i).getClonedParticipants().get(0).equals(user))
+                    return "o grupo nao existe, ou voce n tem direitos suficientes para remover usuarios";
+                boolean result = Server.allGroups.get(i).removeUser(new User(userToRemove));
                 if (result == true) {
                     List<Receiver> receivers = new ArrayList<>();
                     receivers.add((Receiver) user);
@@ -164,9 +180,11 @@ public class Barns_Service implements IBarns {
         return "O usuário n foi encontrado";
     }
 
-    public String removeGroup(String groupName) {
+    public String removeGroup(String groupName, String user) {
         for (int i = 0; i < Server.allGroups.size(); i++) {
             if (Server.allGroups.get(i).getName().equals(groupName)) {
+                if(!Server.allGroups.get(i).getClonedParticipants().get(0).equals(new User(user)))
+                    return "o grupo nao existe, ou voce n tem direitos suficientes para apaga-lo";
                 List<Receiver> receivers = new ArrayList<>();
                 receivers.add((Receiver) Server.allGroups.get(i));
                 Message notification = new Message("O grupo: "
@@ -197,8 +215,19 @@ public class Barns_Service implements IBarns {
         }
     }
 
+    public List<User> getGroupUsers(String groupName, String userName){
+        List<Group> g = Server.allGroups;
+        for (int i = 0; i < Server.allGroups.size(); i++) {
+            if(Server.allGroups.get(i).getName().equals(groupName)){
+                if(Server.allGroups.get(i).getClonedParticipants().contains(new User(userName))){
+                    return Server.allGroups.get(i).getClonedParticipants();
+                }
+            }    
+        }
+        return null;
+    }
     
-    public List<Group> listGroups(String userName){
+    public static List<Group> listGroups(String userName){
         User user = new User(userName);
         List<Group> grupos = new ArrayList<>();
         for (int i = 0; i < Server.allGroups.size(); i++) {
@@ -216,29 +245,60 @@ public class Barns_Service implements IBarns {
     public String login(String userName){
         User user = new User(userName);
         if(Server.allUsers.contains(user)){
-            return "usuario já existe";
+            return null;
         }
         else{
             Server.allUsers.add(user);
             Server.lastUpdateRequest.put(userName, 0);
-            initializeGC(userName);
+            //initializeGC(userName);
         }
-        return "sucesso";
+        return userName;
     }
     
+    @Deprecated
     private void initializeGC(String userName) {
         Runnable GarbageCollectorThread = new Runnable() {
             @Override
             public void run() {
                 Integer lastUpdateTime = Server.lastUpdateRequest.get(userName);
-                if(lastUpdateTime > 3000)
+                if(lastUpdateTime > 10000)
                     destroyUser(userName);
             }
         };
         new Thread(GarbageCollectorThread).start();
     }
     
-    private void destroyUser(String userName){
-        /* a ser implementado */
+    public List<User> listUsers(){
+
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < Server.allUsers.size(); i++) {
+            users.add(Server.allUsers.get(i));
+        }
+        if(users.isEmpty())
+            return null;
+        else 
+            return users;
+    }
+    
+    public static void destroyUser(String userName){
+        /* tira todas as menssagens do buffer direcionadas a esse usuario*/
+        while(getMessageUpdates(userName) != null){
+            getMessageUpdates(userName);
+        }
+        
+        
+         /*remove o usuario de todos os grupos */
+        List<Group> gruposDoUsuario = listGroups(userName);  
+        /* tira esse usuario da lista de usuarios*/
+        Server.allUsers.remove(new User(userName));
+        Server.lastUpdateRequest.remove(userName);
+        if(gruposDoUsuario == null) 
+            return;
+        for (int i = 0; i < gruposDoUsuario.size(); i++) {
+            if(Server.allGroups.contains(gruposDoUsuario.get(i))){
+                Server.allGroups.get(i).removeUser(new User(userName));
+            }
+        }
+        
     }
 }

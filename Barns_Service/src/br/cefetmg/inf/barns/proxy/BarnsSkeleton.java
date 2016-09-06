@@ -5,6 +5,7 @@ import br.cefetmg.inf.barns.Barns_Service;
 import br.cefetmg.inf.barns.domain.Group;
 import br.cefetmg.inf.barns.domain.Message;
 import br.cefetmg.inf.barns.domain.MessageUpdate;
+import br.cefetmg.inf.barns.domain.User;
 import br.cefetmg.inf.barns.util.AbstractInOut;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -66,7 +67,8 @@ public class BarnsSkeleton implements Runnable{
             }
             else if(command == 5){
                 String s  = (String) reader.readObject();
-                String res = processor.removeGroup(s);
+                String user  = (String) reader.readObject();
+                String res = processor.removeGroup(s,user);
                 writer.writeObject(res);
                 writer.flush();
             }
@@ -90,18 +92,37 @@ public class BarnsSkeleton implements Runnable{
             }
             else if(command == 26){
                 Group g  = (Group) reader.readObject();
-                String res = processor.removeFromGroup(g.getClonedParticipants().get(0), g.getName());
+                String res = processor.removeFromGroup(g.getClonedParticipants().get(0), 
+                        g.getName(),
+                        g.getClonedParticipants().get(1).getUserName());
                 writer.writeObject(res);
                 writer.flush();
             }
             else if(command == 27){
                 Group g  = (Group) reader.readObject();
-                String res = processor.addToGroup(g.getClonedParticipants().get(0), g.getName());
+                String res = processor.addToGroup(g.getClonedParticipants().get(0), 
+                        g.getName(),
+                        g.getClonedParticipants().get(1).getUserName());
                 writer.writeObject(res);
+                writer.flush();
+            }
+            else if(command == 60){
+                List<User> users = processor.listUsers();
+                writer.writeObject(users);
+                writer.flush();
+            }
+            else if(command == 63){
+                String groupName = (String) reader.readObject();
+                String userName  = (String) reader.readObject();
+                List<User> users = processor.getGroupUsers(groupName, userName);
+                writer.writeObject(users);
                 writer.flush();
             }
             else if(command == 0){
                 String userName  = (String) reader.readObject();
+                String res = processor.login(userName);
+                writer.writeObject(res);
+                writer.flush();
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
