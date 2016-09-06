@@ -22,4 +22,18 @@ public class Constants {
     public static final String COLOR_PURPLE = "\u001B[35m";
     public static final String COLOR_CYAN = "\u001B[36m";
     public static final String COLOR_WHITE = "\u001B[37m";
+    
+    public static final String helpString = 
+              "pm user ,[user , ...] text \n"
+            + "gm groupName, [groupName, ...] text \n"
+            + "all text \n"
+            + "create groupName user ,[user , ...] \n"
+            + "destroy groupName           /* voce deve ser o dono do grupo para destrui-lo */ \n "
+            + "addTo groupName user          /* voce deve estar no grupo para adicionar pessoas*/ \n"
+            + "removeFrom groupName user        /* voce deve ser o dono do grupo para destrui-lo */ \n"
+            + "listFrom groupName        /* voce deve estar no grupo para listar seus membros */ \n"
+            + "listu        /* lista todos os usuarios*/ \n"
+            + "listg        /* lista os grupos em que voce esta */\n"
+            ;
+              
 }

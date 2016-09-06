@@ -29,7 +29,7 @@ public class Group implements Receiver, Serializable{
     public List<User> getClonedParticipants() {
         List<User> retorno = new ArrayList<>();
         for (int i = 0; i < participants.size(); i++) {
-            retorno.add(participants.get(i));
+            retorno.add(new User(participants.get(i).getUserName()));
         }
         return participants;
     }
