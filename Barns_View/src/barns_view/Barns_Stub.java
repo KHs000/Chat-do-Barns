@@ -32,6 +32,7 @@ public class Barns_Stub implements IBarns {
 
     private String serverAddress;
     private int serverPort;
+    private Colorful_Console console; 
 
     public Barns_Stub(String serverAddress, int serverPort) {
         this.serverAddress = serverAddress;
@@ -179,6 +180,7 @@ public class Barns_Stub implements IBarns {
         return "sucess";
     }
 
+    
     public String login(String nickName) {
         try {
             Socket socket = new Socket(this.serverAddress, this.serverPort);
@@ -410,5 +412,14 @@ public class Barns_Stub implements IBarns {
         }
         return "SUCESS";
     }
+
+    
+
+   
+
+    
+    
+   
+
 
 }
