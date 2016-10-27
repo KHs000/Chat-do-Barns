@@ -49,9 +49,9 @@ public class Server {
             
             while (true) {
                 Socket socket = server.accept();
-                BarnsSkeleton chat = new BarnsSkeleton(socket);
-                Thread t = new Thread(chat);
-                t.start();
+                //BarnsSkeleton chat = new BarnsSkeleton(socket);
+               // Thread t = new Thread(chat);
+               // t.start();
                 
             }
         } catch (Exception e) {

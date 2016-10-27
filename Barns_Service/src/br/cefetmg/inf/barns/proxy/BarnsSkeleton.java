@@ -1,6 +1,7 @@
 
 package br.cefetmg.inf.barns.proxy;
 
+import barns_view.Barns_Stub;
 import br.cefetmg.inf.barns.Barns_Service;
 import br.cefetmg.inf.barns.domain.Group;
 import br.cefetmg.inf.barns.domain.Message;
@@ -39,9 +40,10 @@ public class BarnsSkeleton implements Runnable, IBarnsSkeleton{
         ObjectOutputStream writer;
         ObjectInputStream reader;
         Barns_Service processor = new Barns_Service();
-        
+
         try {
-            //DEFLAGRAR MENSAGENS PARA COM BASE NA FUNÇÃO (pm, gm, am)
+            
+            /*//DEFLAGRAR MENSAGENS PARA COM BASE NA FUNÇÃO (pm, gm, am)
             int command; //Tipo de envio: Private(1) ; Grupo(2) ; ou All(3)
             //Receiver target; 
             // !-IMPORTANT Modelo de implementação que pede por uma classe receiver
@@ -128,8 +130,9 @@ public class BarnsSkeleton implements Runnable, IBarnsSkeleton{
                 writer.writeObject(res);
                 writer.flush();
             }
+            */
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage());  
         }
     }
     
