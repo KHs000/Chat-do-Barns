@@ -214,7 +214,8 @@ public class Barns_Service implements IBarns {
             return "Sucesso na criação";
         }
     }
-
+    
+    
     public List<User> getGroupUsers(String groupName, String userName){
         List<Group> g = Server.allGroups;
         for (int i = 0; i < Server.allGroups.size(); i++) {
@@ -227,7 +228,7 @@ public class Barns_Service implements IBarns {
         return null;
     }
     
-    public static List<Group> listGroups(String userName){
+    public List<Group> listGroups(String userName){
         User user = new User(userName);
         List<Group> grupos = new ArrayList<>();
         for (int i = 0; i < Server.allGroups.size(); i++) {
@@ -280,7 +281,7 @@ public class Barns_Service implements IBarns {
             return users;
     }
     
-    public static void destroyUser(String userName){
+    public void destroyUser(String userName){
         /* tira todas as menssagens do buffer direcionadas a esse usuario*/
         while(getMessageUpdates(userName) != null){
             getMessageUpdates(userName);

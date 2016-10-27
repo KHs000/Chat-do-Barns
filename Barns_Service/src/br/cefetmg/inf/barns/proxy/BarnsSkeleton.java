@@ -17,16 +17,24 @@ import java.util.List;
  *
  * @author Aluno
  */
-public class BarnsSkeleton implements Runnable{
+public class BarnsSkeleton implements Runnable, IBarnsSkeleton{
     
-    private Socket socket;
+    private Barns_Service trabalhador;
     
-    public BarnsSkeleton (Socket socket) {this.socket = socket;}
     
-    private Socket getSocket() {
-        return this.socket;        
+    public BarnsSkeleton () {
+       trabalhador  = new Barns_Service();
     }
+
+    public Barns_Service getTrabalhador() {
+        return trabalhador;
+    }
+
+    public void setTrabalhador(Barns_Service trabalhador) {
+        this.trabalhador = trabalhador;
+    } 
     
+    @Override
     public void process () {
         ObjectOutputStream writer;
         ObjectInputStream reader;
@@ -34,10 +42,6 @@ public class BarnsSkeleton implements Runnable{
         
         try {
             //DEFLAGRAR MENSAGENS PARA COM BASE NA FUNÇÃO (pm, gm, am)
-            
-            writer = AbstractInOut.getObjectWriter(this.getSocket());
-            reader = AbstractInOut.getObjectReader(this.getSocket());
-            
             int command; //Tipo de envio: Private(1) ; Grupo(2) ; ou All(3)
             //Receiver target; 
             // !-IMPORTANT Modelo de implementação que pede por uma classe receiver
@@ -131,12 +135,12 @@ public class BarnsSkeleton implements Runnable{
     
  @Override
     public void run() {
-
+/*
         try {
             this.process();
             this.getSocket().close();
         } catch (IOException ex) {       
             throw new RuntimeException(ex.getMessage());
-        }
+        }*/
     }
 }
